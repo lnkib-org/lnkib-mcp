@@ -1,0 +1,229 @@
+[
+  {
+    "name": "append_bio_link",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "bioId",
+      "title",
+      "url"
+    ],
+    "fields": [
+      "badge",
+      "bioId",
+      "position",
+      "subtitle",
+      "title",
+      "url"
+    ]
+  },
+  {
+    "name": "create_bio_page",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "displayName",
+      "slug"
+    ],
+    "fields": [
+      "avatarUrl",
+      "bio",
+      "displayName",
+      "handleLabel",
+      "links",
+      "slug",
+      "socials",
+      "theme"
+    ]
+  },
+  {
+    "name": "create_manual_booking",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "bookingDate",
+      "customerName",
+      "startTime"
+    ],
+    "fields": [
+      "bookingDate",
+      "customerContact",
+      "customerIgHandle",
+      "customerName",
+      "durationMinutes",
+      "note",
+      "profileId",
+      "startTime",
+      "status"
+    ]
+  },
+  {
+    "name": "draw_comment_raffle",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "accountId",
+      "mediaId",
+      "winnerCount"
+    ],
+    "fields": [
+      "accountId",
+      "dedupeByUser",
+      "excludeSelf",
+      "keywordFilter",
+      "mediaId",
+      "winnerCount"
+    ]
+  },
+  {
+    "name": "get_comments",
+    "readOnly": true,
+    "destructive": false,
+    "required": [
+      "accountId"
+    ],
+    "fields": [
+      "accountId",
+      "limit",
+      "mediaId",
+      "refresh"
+    ]
+  },
+  {
+    "name": "get_logs",
+    "readOnly": true,
+    "destructive": false,
+    "required": [
+      "accountId"
+    ],
+    "fields": [
+      "accountId",
+      "limit"
+    ]
+  },
+  {
+    "name": "list_accounts",
+    "readOnly": true,
+    "destructive": false,
+    "required": [],
+    "fields": []
+  },
+  {
+    "name": "list_bio_pages",
+    "readOnly": true,
+    "destructive": false,
+    "required": [],
+    "fields": []
+  },
+  {
+    "name": "list_booking_profiles",
+    "readOnly": true,
+    "destructive": false,
+    "required": [],
+    "fields": []
+  },
+  {
+    "name": "list_bookings",
+    "readOnly": true,
+    "destructive": false,
+    "required": [],
+    "fields": [
+      "profileId",
+      "status"
+    ]
+  },
+  {
+    "name": "list_media",
+    "readOnly": true,
+    "destructive": false,
+    "required": [
+      "accountId"
+    ],
+    "fields": [
+      "accountId"
+    ]
+  },
+  {
+    "name": "list_rules",
+    "readOnly": true,
+    "destructive": false,
+    "required": [
+      "accountId"
+    ],
+    "fields": [
+      "accountId"
+    ]
+  },
+  {
+    "name": "set_bio_published",
+    "readOnly": false,
+    "destructive": true,
+    "required": [
+      "bioId",
+      "published"
+    ],
+    "fields": [
+      "bioId",
+      "published"
+    ]
+  },
+  {
+    "name": "toggle_rule",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "ruleId"
+    ],
+    "fields": [
+      "ruleId"
+    ]
+  },
+  {
+    "name": "update_bio_page",
+    "readOnly": false,
+    "destructive": true,
+    "required": [
+      "bioId"
+    ],
+    "fields": [
+      "avatarUrl",
+      "bio",
+      "bioId",
+      "displayName",
+      "handleLabel",
+      "links",
+      "slug",
+      "socials",
+      "theme"
+    ]
+  },
+  {
+    "name": "upsert_rule",
+    "readOnly": false,
+    "destructive": false,
+    "required": [
+      "accountId",
+      "mediaId",
+      "name"
+    ],
+    "fields": [
+      "accountId",
+      "ctaLabel",
+      "ctaUrl",
+      "dmDelayMinutes",
+      "dmMessage",
+      "enableDm",
+      "enableFollowNudge",
+      "enablePublicReply",
+      "followNudgeMessage",
+      "id",
+      "isActive",
+      "keywordDmVariants",
+      "keywords",
+      "mediaId",
+      "name",
+      "publicReplies",
+      "triggerType"
+    ]
+  }
+]

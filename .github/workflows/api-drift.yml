@@ -1,0 +1,22 @@
+name: API drift watch
+
+# 운영 공개 API의 OpenAPI 명세가 저장소의 openapi/openapi.json과 달라졌는지 매주 확인한다.
+# 실패하면 API가 바뀐 것이므로 `npm run openapi:sync && npm run openapi:types`로 갱신하고 도구 영향을 검토한다.
+on:
+  schedule:
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: node scripts/sync-openapi.mjs --check

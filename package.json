@@ -1,0 +1,58 @@
+{
+  "name": "@lnkib/mcp",
+  "version": "0.2.0",
+  "description": "MCP server for lnkib: Link-in-Bio, bookings and Instagram automation for your own AI assistant.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "lnkib-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist/index.js",
+    "dist/server.js",
+    "dist/client.js",
+    "dist/api-types.js",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "lnkib",
+    "link-in-bio",
+    "bookings",
+    "instagram"
+  ],
+  "homepage": "https://lnkib.com/docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lnkib-org/lnkib-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lnkib-org/lnkib-mcp/issues"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "tsc -p tsconfig.json && node --test dist/*.spec.js",
+    "test:update-contract": "tsc -p tsconfig.json && UPDATE_TOOLS_CONTRACT=1 node --test dist/tools-contract.spec.js",
+    "openapi:sync": "node scripts/sync-openapi.mjs",
+    "openapi:check": "node scripts/sync-openapi.mjs --check",
+    "openapi:types": "openapi-typescript openapi/openapi.json -o src/generated/openapi.d.ts",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run test"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "~1.32.2",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "openapi-typescript": "7.12.0",
+    "typescript": "^5.7.0"
+  }
+}

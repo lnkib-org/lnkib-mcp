@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "lnkib": {
+      "command": "npx",
+      "args": ["-y", "@lnkib/mcp"],
+      "env": {
+        "LNKIB_API_KEY": "iflow_live_REPLACE_ME"
+      }
+    }
+  }
+}

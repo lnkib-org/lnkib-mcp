@@ -1,0 +1,3462 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "lnkib Public API",
+    "version": "1.0.0",
+    "description": "REST API for lnkib (Link-in-Bio, bookings and Instagram comment/DM automation). Authenticate with an API key (`X-API-Key` header or `Authorization: Bearer`). Each endpoint lists the scope the key needs in `x-required-scopes`. Link-in-Bio and bookings work without an Instagram connection. AI-created bio pages are always private drafts; publishing needs the separate `bio:publish` scope. Rate limits: reads 60/min, writes 30/min (some endpoints lower)."
+  },
+  "servers": [
+    {
+      "url": "https://api.lnkib.com/api/v1"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyHeader": []
+    },
+    {
+      "BearerKey": []
+    }
+  ],
+  "paths": {
+    "/accounts": {
+      "get": {
+        "operationId": "listAccounts",
+        "summary": "List connected Instagram accounts",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "accounts:read"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/IgAccountDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/media": {
+      "get": {
+        "operationId": "listMedia",
+        "summary": "List posts and Reels of an account",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "accounts:read"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/IgMediaDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/rules": {
+      "get": {
+        "operationId": "listRules",
+        "summary": "List comment/DM automation rules",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "rules:read"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AutomationRuleDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "upsertRule",
+        "summary": "Create or update an automation rule",
+        "description": "Send `id` to update an existing rule. `accountId` in the body is taken from the path.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "rules:write"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertRuleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AutomationRuleDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rules/{ruleId}/toggle": {
+      "patch": {
+        "operationId": "toggleRule",
+        "summary": "Enable or pause a rule",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "rules:write"
+        ],
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ToggleRuleResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/rules/{ruleId}": {
+      "delete": {
+        "operationId": "deleteRule",
+        "summary": "Delete an automation rule",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "rules:write"
+        ],
+        "parameters": [
+          {
+            "name": "ruleId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DeleteRuleResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/comments": {
+      "get": {
+        "operationId": "getComments",
+        "summary": "Fetch collected comments",
+        "description": "Served from a 5-minute cache unless `refresh=true` (15 second cooldown).",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "comments:read"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mediaId",
+            "in": "query",
+            "required": false,
+            "description": "Only comments of this media",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "refresh",
+            "in": "query",
+            "required": false,
+            "description": "Bypass the cache",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "true",
+                "1"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/IgCommentDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/comments/raffle": {
+      "post": {
+        "operationId": "drawCommentRaffle",
+        "summary": "Draw fair comment raffle winners",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "raffle:run"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentRaffleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CommentRaffleResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/accounts/{accountId}/logs": {
+      "get": {
+        "operationId": "getLogs",
+        "summary": "Read auto-reply and DM execution logs",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "logs:read"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Max entries (default 20)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/WebhookLogDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bio": {
+      "get": {
+        "operationId": "listBioPages",
+        "summary": "List your Link-in-Bio pages",
+        "description": "Works without any Instagram connection.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:read"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BioPageDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createBioPage",
+        "summary": "Create a Link-in-Bio page as a private draft",
+        "description": "The page is ALWAYS created unpublished; the body has no publish flag. Publish it with `POST /bio/{bioId}/publish` (needs `bio:publish`). Links without an `id` get one assigned. Works without any Instagram connection.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:write"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicApiCreateBioRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BioPageDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bio/{bioId}": {
+      "put": {
+        "operationId": "updateBioPage",
+        "summary": "Update fields of a bio page",
+        "description": "Only the fields you send change. The publish state and linked account never change here. Sending `links`, `socials`, `linkGroups` or `schedule` REPLACES the whole list; read the page first and send the complete list (use `POST /bio/{bioId}/links` to add one link).",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:write"
+        ],
+        "parameters": [
+          {
+            "name": "bioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicApiUpdateBioRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BioPageDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bio/{bioId}/publish": {
+      "post": {
+        "operationId": "setBioPublished",
+        "summary": "Publish or unpublish a bio page",
+        "description": "Making a page public exposes it at /b/{slug}. Only call after the user approved.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:publish"
+        ],
+        "parameters": [
+          {
+            "name": "bioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicApiSetBioPublishedRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BioPageDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bio/{bioId}/links": {
+      "post": {
+        "operationId": "appendBioLink",
+        "summary": "Add one link to a bio page",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:write"
+        ],
+        "parameters": [
+          {
+            "name": "bioId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AppendBioLinkRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BioPageDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/booking-profiles": {
+      "get": {
+        "operationId": "listBookingProfiles",
+        "summary": "List booking pages",
+        "description": "Works without any Instagram connection.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bookings:read"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BookingProfileDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/bookings": {
+      "get": {
+        "operationId": "listBookings",
+        "summary": "List bookings (newest first, max 200)",
+        "description": "Contains customer names and contact details. Treat as personal data.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bookings:read"
+        ],
+        "parameters": [
+          {
+            "name": "profileId",
+            "in": "query",
+            "required": false,
+            "description": "Booking page id from /booking-profiles",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Filter by status",
+            "schema": {
+              "$ref": "#/components/schemas/BookingStatus"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/BookingDto"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createManualBooking",
+        "summary": "Add a manual (phone or walk-in) booking",
+        "description": "Open days, hours, capacity and past dates are NOT enforced. No message is sent to the customer. Defaults to CONFIRMED. `startTime` is HH:mm (24h) and `bookingDate` is YYYY-MM-DD. `durationMinutes` (5-720) defaults to the page slot length. If `profileId` is omitted a hidden default booking page is used (created on first use). Works without a booking page or Instagram connection.",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bookings:write"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHostBookingRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BookingDto"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/storage/presign": {
+      "post": {
+        "operationId": "createPresignedUpload",
+        "summary": "Create a presigned URL for a bio image upload",
+        "security": [
+          {
+            "ApiKeyHeader": []
+          },
+          {
+            "BearerKey": []
+          }
+        ],
+        "x-required-scopes": [
+          "bio:write"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePresignedUploadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success. The payload is in `data`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "ok",
+                    "data"
+                  ],
+                  "properties": {
+                    "ok": {
+                      "const": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CreatePresignedUploadResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "The key lacks the required scope or is pinned to another Instagram account",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      },
+      "BearerKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Same key as `Authorization: Bearer iflow_live_...`"
+      }
+    },
+    "schemas": {
+      "AppendBioLinkRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "badge": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "position": {
+            "type": "string",
+            "enum": [
+              "top",
+              "bottom"
+            ]
+          }
+        },
+        "required": [
+          "title",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "AutomationRuleDto": {
+        "type": "object",
+        "properties": {
+          "triggerType": {
+            "$ref": "#/components/schemas/TriggerType"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enablePublicReply": {
+            "type": "boolean"
+          },
+          "publicReplies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enableDm": {
+            "type": "boolean"
+          },
+          "dmMessage": {
+            "type": "string"
+          },
+          "dmDelayMinutes": {
+            "type": "number"
+          },
+          "enableFollowNudge": {
+            "type": "boolean"
+          },
+          "followNudgeMessage": {
+            "type": "string"
+          },
+          "enableCta": {
+            "type": "boolean"
+          },
+          "ctaLabel": {
+            "type": "string"
+          },
+          "ctaUrl": {
+            "type": "string"
+          },
+          "keywordDmVariants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeywordDmVariantDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "mediaId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "sentCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "accountId",
+          "ctaLabel",
+          "ctaUrl",
+          "dmMessage",
+          "enableDm",
+          "enablePublicReply",
+          "id",
+          "isActive",
+          "keywords",
+          "mediaId",
+          "name",
+          "publicReplies",
+          "sentCount",
+          "triggerType"
+        ],
+        "additionalProperties": false
+      },
+      "BioLinkBlockDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "subtitle": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          },
+          "badge": {
+            "type": "string"
+          },
+          "price": {
+            "type": "string"
+          },
+          "compareAtPrice": {
+            "type": "string"
+          },
+          "groupId": {
+            "type": "string"
+          },
+          "isHighlighted": {
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "clickCount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "url",
+          "isActive",
+          "clickCount"
+        ],
+        "additionalProperties": false
+      },
+      "BioLinkGroupDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "BioLinkLayout": {
+        "type": "string",
+        "enum": [
+          "list",
+          "cards"
+        ]
+      },
+      "BioPageDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "ownerUserId": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accountHandle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "handleLabel": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/BioTheme"
+          },
+          "initials": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string"
+          },
+          "bannerImageUrl": {
+            "type": "string"
+          },
+          "bannerCaption": {
+            "type": "string"
+          },
+          "contactLabel": {
+            "type": "string"
+          },
+          "contactUrl": {
+            "type": "string"
+          },
+          "enableLinkSearch": {
+            "type": "boolean"
+          },
+          "linkLayout": {
+            "$ref": "#/components/schemas/BioLinkLayout"
+          },
+          "socials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioSocialLinkDto"
+            }
+          },
+          "linkGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioLinkGroupDto"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioLinkBlockDto"
+            }
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioScheduleEventDto"
+            }
+          },
+          "redirectUrl": {
+            "type": "string"
+          },
+          "redirectClickCount": {
+            "type": "number"
+          },
+          "isPublished": {
+            "type": "boolean"
+          },
+          "totalClicks": {
+            "type": "number"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ownerUserId",
+          "accountId",
+          "slug",
+          "displayName",
+          "handleLabel",
+          "bio",
+          "theme",
+          "initials",
+          "enableLinkSearch",
+          "linkLayout",
+          "socials",
+          "linkGroups",
+          "links",
+          "schedule",
+          "redirectClickCount",
+          "isPublished",
+          "totalClicks",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "BioScheduleEventDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "startsAt"
+        ],
+        "additionalProperties": false
+      },
+      "BioSocialLinkDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/BioSocialType"
+          },
+          "url": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "url"
+        ],
+        "additionalProperties": false
+      },
+      "BioSocialType": {
+        "type": "string",
+        "enum": [
+          "instagram",
+          "facebook",
+          "tiktok",
+          "threads",
+          "x",
+          "youtube",
+          "linkedin",
+          "kakao",
+          "blog",
+          "website"
+        ]
+      },
+      "BioTheme": {
+        "type": "string",
+        "enum": [
+          "light",
+          "dark",
+          "indigo"
+        ]
+      },
+      "BookingConfirmationMode": {
+        "type": "string",
+        "enum": [
+          "AUTO_CONFIRM",
+          "MANUAL_APPROVAL"
+        ]
+      },
+      "BookingDmStatus": {
+        "type": "string",
+        "enum": [
+          "AVAILABLE",
+          "NO_ACCOUNT",
+          "NO_SENDER"
+        ],
+        "description": "호스트 화면용: 이 예약의 고객에게 DM 알림을 보낼 수 있는지."
+      },
+      "BookingDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "profileId": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bookingCode": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerIgHandle": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "customerIgSenderId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "customerContact": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "bookingDate": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "endTime": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/BookingStatus"
+          },
+          "note": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cancelReason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "dmStatus": {
+            "$ref": "#/components/schemas/BookingDmStatus",
+            "description": "호스트용 목록·상태 변경 응답에서만 채워진다."
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "profileId",
+          "accountId",
+          "bookingCode",
+          "customerName",
+          "customerIgHandle",
+          "customerIgSenderId",
+          "customerContact",
+          "bookingDate",
+          "startTime",
+          "endTime",
+          "status",
+          "note",
+          "cancelReason",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "BookingProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accountId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "guideMessage": {
+            "type": "string"
+          },
+          "confirmationMode": {
+            "$ref": "#/components/schemas/BookingConfirmationMode"
+          },
+          "slotDurationMinutes": {
+            "type": "number"
+          },
+          "maxBookingsPerSlot": {
+            "type": "number"
+          },
+          "openDays": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
+          "openTime": {
+            "type": "string"
+          },
+          "closeTime": {
+            "type": "string"
+          },
+          "triggerKeywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userId",
+          "accountId",
+          "slug",
+          "title",
+          "description",
+          "guideMessage",
+          "confirmationMode",
+          "slotDurationMinutes",
+          "maxBookingsPerSlot",
+          "openDays",
+          "openTime",
+          "closeTime",
+          "triggerKeywords",
+          "isActive",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
+      },
+      "BookingStatus": {
+        "type": "string",
+        "enum": [
+          "PENDING",
+          "CONFIRMED",
+          "CANCELLED",
+          "COMPLETED"
+        ]
+      },
+      "CommentRaffleRequest": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "winnerCount": {
+            "type": "number"
+          },
+          "dedupeByUser": {
+            "type": "boolean"
+          },
+          "excludeSelf": {
+            "type": "boolean"
+          },
+          "keywordFilter": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaId",
+          "winnerCount"
+        ],
+        "additionalProperties": false
+      },
+      "CommentRaffleResponse": {
+        "type": "object",
+        "properties": {
+          "mediaId": {
+            "type": "string"
+          },
+          "totalComments": {
+            "type": "number"
+          },
+          "eligibleCount": {
+            "type": "number"
+          },
+          "winners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CommentRaffleWinnerDto"
+            }
+          },
+          "drawnAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "mediaId",
+          "totalComments",
+          "eligibleCount",
+          "winners",
+          "drawnAt"
+        ],
+        "additionalProperties": false
+      },
+      "CommentRaffleWinnerDto": {
+        "type": "object",
+        "properties": {
+          "rank": {
+            "type": "number"
+          },
+          "commentId": {
+            "type": "string"
+          },
+          "userHandle": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rank",
+          "commentId",
+          "userHandle",
+          "text",
+          "timestamp"
+        ],
+        "additionalProperties": false
+      },
+      "CreateHostBookingRequest": {
+        "type": "object",
+        "properties": {
+          "profileId": {
+            "type": "string",
+            "description": "생략하면 본인 예약 페이지(없으면 비공개 기본 프로필을 자동 생성)에 등록한다."
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "customerIgHandle": {
+            "type": "string"
+          },
+          "customerContact": {
+            "type": "string"
+          },
+          "bookingDate": {
+            "type": "string"
+          },
+          "startTime": {
+            "type": "string"
+          },
+          "durationMinutes": {
+            "type": "number",
+            "description": "예약 길이(분). 생략하면 예약 페이지의 슬롯 길이를 쓴다."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "CONFIRMED"
+            ],
+            "description": "생략하면 CONFIRMED."
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "customerName",
+          "bookingDate",
+          "startTime"
+        ],
+        "additionalProperties": false,
+        "description": "호스트가 직접 등록하는 예약. 운영일·정원·과거 날짜 제한 없이 등록하며 고객에게 DM은 가지 않는다."
+      },
+      "CreatePresignedUploadRequest": {
+        "type": "object",
+        "properties": {
+          "filename": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "number"
+          },
+          "purpose": {
+            "$ref": "#/components/schemas/StoragePurpose"
+          }
+        },
+        "required": [
+          "filename",
+          "contentType",
+          "sizeBytes"
+        ],
+        "additionalProperties": false
+      },
+      "CreatePresignedUploadResponse": {
+        "type": "object",
+        "properties": {
+          "uploadUrl": {
+            "type": "string"
+          },
+          "publicUrl": {
+            "type": "string"
+          },
+          "key": {
+            "type": "string"
+          },
+          "expiresInSeconds": {
+            "type": "number"
+          },
+          "method": {
+            "type": "string",
+            "const": "PUT"
+          }
+        },
+        "required": [
+          "uploadUrl",
+          "publicUrl",
+          "key",
+          "expiresInSeconds",
+          "method"
+        ],
+        "additionalProperties": false
+      },
+      "DeleteRuleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "deleted": {
+            "type": "boolean",
+            "const": true
+          }
+        },
+        "required": [
+          "id",
+          "deleted"
+        ],
+        "additionalProperties": false
+      },
+      "EditorBasePermission": {
+        "type": "string",
+        "enum": [
+          "logs:read",
+          "rules:write"
+        ]
+      },
+      "EditorOptionalPermission": {
+        "type": "string",
+        "enum": [
+          "account:status",
+          "account:safety"
+        ]
+      },
+      "IgAccountDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "orgId": {
+            "type": "string"
+          },
+          "handle": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "profilePictureUrl": {
+            "type": "string",
+            "description": "Instagram 프로필 사진 URL. 없으면 이니셜 아바타로 대체한다."
+          },
+          "followers": {
+            "type": "string"
+          },
+          "avatarBg": {
+            "type": "string"
+          },
+          "initials": {
+            "type": "string"
+          },
+          "webhookStatus": {
+            "type": "string",
+            "enum": [
+              "connected",
+              "warning"
+            ]
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "activeRulesCount": {
+            "type": "number"
+          },
+          "tokenDaysLeft": {
+            "type": "number"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/IgAccountStatsDto"
+          },
+          "myRole": {
+            "$ref": "#/components/schemas/IgAccountRole"
+          },
+          "myPermissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IgAccountPermission"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "handle",
+          "name",
+          "followers",
+          "avatarBg",
+          "initials",
+          "webhookStatus",
+          "tokenDaysLeft",
+          "stats",
+          "myRole",
+          "myPermissions"
+        ],
+        "additionalProperties": false
+      },
+      "IgAccountPermission": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/EditorBasePermission"
+          },
+          {
+            "$ref": "#/components/schemas/EditorOptionalPermission"
+          }
+        ]
+      },
+      "IgAccountRole": {
+        "type": "string",
+        "enum": [
+          "owner",
+          "editor"
+        ]
+      },
+      "IgAccountStatsDto": {
+        "type": "object",
+        "properties": {
+          "todayDms": {
+            "type": "number"
+          },
+          "todayReplies": {
+            "type": "number"
+          },
+          "clickRate": {
+            "type": "string"
+          },
+          "dmDelta": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "todayDms",
+          "todayReplies",
+          "clickRate",
+          "dmDelta"
+        ],
+        "additionalProperties": false
+      },
+      "IgCommentDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "mediaId": {
+            "type": "string"
+          },
+          "mediaType": {
+            "$ref": "#/components/schemas/MediaType"
+          },
+          "mediaTitle": {
+            "type": "string"
+          },
+          "mediaThumbnailUrl": {
+            "type": "string"
+          },
+          "userHandle": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "likeCount": {
+            "type": "number"
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IgCommentReplyDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "accountId",
+          "mediaId",
+          "mediaType",
+          "mediaTitle",
+          "userHandle",
+          "text",
+          "timestamp",
+          "likeCount",
+          "replies"
+        ],
+        "additionalProperties": false
+      },
+      "IgCommentReplyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "userHandle": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "userHandle",
+          "text",
+          "timestamp"
+        ],
+        "additionalProperties": false
+      },
+      "IgMediaDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/MediaType"
+          },
+          "title": {
+            "type": "string"
+          },
+          "caption": {
+            "type": "string"
+          },
+          "views": {
+            "type": "string"
+          },
+          "comments": {
+            "type": "number"
+          },
+          "date": {
+            "type": "string"
+          },
+          "gradient": {
+            "type": "string"
+          },
+          "thumbnailUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "accountId",
+          "type",
+          "title",
+          "caption",
+          "views",
+          "comments",
+          "date",
+          "gradient"
+        ],
+        "additionalProperties": false
+      },
+      "KeywordDmVariantDto": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string"
+          },
+          "dmMessage": {
+            "type": "string"
+          },
+          "ctaLabel": {
+            "type": "string"
+          },
+          "ctaUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "keyword",
+          "dmMessage"
+        ],
+        "additionalProperties": false
+      },
+      "MediaType": {
+        "type": "string",
+        "enum": [
+          "REELS",
+          "POST"
+        ]
+      },
+      "PublicApiCreateBioRequest": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "slug": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "handleLabel": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/BioTheme"
+          },
+          "initials": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string"
+          },
+          "bannerImageUrl": {
+            "type": "string"
+          },
+          "bannerCaption": {
+            "type": "string"
+          },
+          "contactLabel": {
+            "type": "string"
+          },
+          "contactUrl": {
+            "type": "string"
+          },
+          "enableLinkSearch": {
+            "type": "boolean"
+          },
+          "linkLayout": {
+            "$ref": "#/components/schemas/BioLinkLayout"
+          },
+          "socials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioSocialLinkDto"
+            }
+          },
+          "linkGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioLinkGroupDto"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "clickCount": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "thumbnailUrl": {
+                  "type": "string"
+                },
+                "badge": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "string"
+                },
+                "compareAtPrice": {
+                  "type": "string"
+                },
+                "groupId": {
+                  "type": "string"
+                },
+                "isHighlighted": {
+                  "type": "boolean"
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "isActive",
+                "title",
+                "url"
+              ]
+            }
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioScheduleEventDto"
+            }
+          },
+          "redirectUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "displayName"
+        ],
+        "additionalProperties": false,
+        "description": "공개 API로 바이오를 만들 때의 본문. 공개 여부는 받지 않는다(항상 비공개로 시작, 공개는 별도 권한)."
+      },
+      "PublicApiSetBioPublishedRequest": {
+        "type": "object",
+        "properties": {
+          "published": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "published"
+        ],
+        "additionalProperties": false
+      },
+      "PublicApiUpdateBioRequest": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "handleLabel": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "theme": {
+            "$ref": "#/components/schemas/BioTheme"
+          },
+          "initials": {
+            "type": "string"
+          },
+          "avatarUrl": {
+            "type": "string"
+          },
+          "bannerImageUrl": {
+            "type": "string"
+          },
+          "bannerCaption": {
+            "type": "string"
+          },
+          "contactLabel": {
+            "type": "string"
+          },
+          "contactUrl": {
+            "type": "string"
+          },
+          "enableLinkSearch": {
+            "type": "boolean"
+          },
+          "linkLayout": {
+            "$ref": "#/components/schemas/BioLinkLayout"
+          },
+          "socials": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioSocialLinkDto"
+            }
+          },
+          "linkGroups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioLinkGroupDto"
+            }
+          },
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "clickCount": {
+                  "type": "number"
+                },
+                "id": {
+                  "type": "string"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "subtitle": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string"
+                },
+                "thumbnailUrl": {
+                  "type": "string"
+                },
+                "badge": {
+                  "type": "string"
+                },
+                "price": {
+                  "type": "string"
+                },
+                "compareAtPrice": {
+                  "type": "string"
+                },
+                "groupId": {
+                  "type": "string"
+                },
+                "isHighlighted": {
+                  "type": "boolean"
+                },
+                "isActive": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "isActive",
+                "title",
+                "url"
+              ]
+            }
+          },
+          "schedule": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BioScheduleEventDto"
+            }
+          },
+          "redirectUrl": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "description": "공개 API로 바이오를 고칠 때의 본문. 보낸 필드만 바뀌고 공개 상태는 유지된다."
+      },
+      "StoragePurpose": {
+        "type": "string",
+        "enum": [
+          "bio-avatar",
+          "bio-banner",
+          "general"
+        ]
+      },
+      "ToggleRuleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "isActive"
+        ],
+        "additionalProperties": false
+      },
+      "TriggerType": {
+        "type": "string",
+        "enum": [
+          "keywords",
+          "all"
+        ]
+      },
+      "UpsertRuleRequest": {
+        "type": "object",
+        "properties": {
+          "triggerType": {
+            "$ref": "#/components/schemas/TriggerType"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enablePublicReply": {
+            "type": "boolean"
+          },
+          "publicReplies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "enableDm": {
+            "type": "boolean"
+          },
+          "dmMessage": {
+            "type": "string"
+          },
+          "dmDelayMinutes": {
+            "type": "number"
+          },
+          "enableFollowNudge": {
+            "type": "boolean"
+          },
+          "followNudgeMessage": {
+            "type": "string"
+          },
+          "enableCta": {
+            "type": "boolean"
+          },
+          "ctaLabel": {
+            "type": "string"
+          },
+          "ctaUrl": {
+            "type": "string"
+          },
+          "keywordDmVariants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeywordDmVariantDto"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "mediaId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "accountId",
+          "ctaLabel",
+          "ctaUrl",
+          "dmMessage",
+          "enableDm",
+          "enablePublicReply",
+          "keywords",
+          "mediaId",
+          "name",
+          "publicReplies",
+          "triggerType"
+        ],
+        "additionalProperties": false
+      },
+      "WebhookLogDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "accountId": {
+            "type": "string"
+          },
+          "accountHandle": {
+            "type": "string"
+          },
+          "userHandle": {
+            "type": "string"
+          },
+          "commentText": {
+            "type": "string"
+          },
+          "matchedKeyword": {
+            "type": "string"
+          },
+          "actionSummary": {
+            "type": "string"
+          },
+          "timeAgo": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "accountId",
+          "userHandle",
+          "commentText",
+          "matchedKeyword",
+          "actionSummary",
+          "timeAgo"
+        ],
+        "additionalProperties": false
+      },
+      "ApiError": {
+        "type": "object",
+        "required": [
+          "ok",
+          "error"
+        ],
+        "properties": {
+          "ok": {
+            "const": false
+          },
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "examples": [
+                  "VALIDATION_ERROR",
+                  "FORBIDDEN",
+                  "NOT_FOUND",
+                  "RATE_LIMITED"
+                ]
+              },
+              "message": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
