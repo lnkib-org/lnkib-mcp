@@ -28,4 +28,4 @@ Rules that must not regress: read tools stay read-only; `create_bio_page` has no
 
 ## Releasing
 
-Maintainers tag `v<version>` (e.g. `v0.2.0`). The publish workflow checks that the tag matches `package.json`, runs the tests and publishes to npm with provenance.
+Maintainers tag `v<version>` (e.g. `v0.2.0`). The publish workflow checks that the tag matches `package.json`, runs the tests and publishes to npm with [trusted publishing](https://docs.npmjs.com/trusted-publishers) (OIDC): no long-lived npm token is stored, and provenance is attached automatically. The trusted publisher (repository `lnkib-org/lnkib-mcp`, workflow `publish.yml`) is configured in the package settings on npmjs.com.

@@ -1,6 +1,8 @@
 name: Publish to npm
 
 # `vX.Y.Z` 태그를 푸시했을 때만 실행된다. 태그가 package.json 버전과 다르면 실패한다.
+# 장기 토큰(NPM_TOKEN)을 쓰지 않는다: npm의 trusted publishing(OIDC)으로 인증하고 출처 증명(provenance)이 자동으로 붙는다.
+# 사전 설정: npm 패키지 설정 → Trusted Publisher → GitHub Actions: 저장소 lnkib-org/lnkib-mcp, 워크플로 publish.yml.
 on:
   push:
     tags:
@@ -21,6 +23,8 @@ jobs:
           node-version: '24'
           cache: npm
           registry-url: 'https://registry.npmjs.org'
+      - name: Use an npm that supports trusted publishing
+        run: npm install -g npm@latest
       - run: npm ci
 
       - name: Check tag matches package.json
@@ -32,7 +36,5 @@ jobs:
 
       - run: npm test
       - run: npm audit --omit=dev --audit-level=high
-      - name: Publish
-        run: npm publish --access public --provenance
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Publish (trusted publishing, no token)
+        run: npm publish --access public
