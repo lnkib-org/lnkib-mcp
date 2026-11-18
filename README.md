@@ -6,7 +6,7 @@
 - You pay your AI provider for model usage. lnkib only provides the connection.
 - This server only calls the public lnkib REST API ([OpenAPI spec](https://api.lnkib.com/api/v1/openapi.json)) with the API key you give it.
 
-> **Status:** not published to npm yet. Until it is, run it from source (see below) or use the REST API directly.
+> **Status:** published on npm as `@lnkib/mcp`.
 
 ## Quick start
 

@@ -2,6 +2,9 @@
 
 Semantic versioning: removing or renaming a tool/field, or making a field required → **major**; adding tools or optional fields → **minor**; fixes → **patch**.
 
+## 0.2.1
+- No functional change. First release published from CI with npm trusted publishing (OIDC) and provenance.
+
 ## 0.2.0
 - First public version of `@lnkib/mcp` (binary `lnkib-mcp`, server name `lnkib`).
 - Configuration: `LNKIB_API_KEY` (required) and `LNKIB_API_BASE` (default `https://api.lnkib.com`).
